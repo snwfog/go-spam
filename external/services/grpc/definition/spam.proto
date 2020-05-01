@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package com.stackadapt;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "definition";
+
+// option (gogoproto.unmarshaler_all) = true;
+// option (gogoproto.sizer_all) = true;
+// option (gogoproto.marshaler_all) = true;
+
+message HealthRequest {
+  string service = 1;
+}
+
+message HealthResponse {
+  enum Status {
+    UNKNOWN     = 0;
+    SERVING     = 1;
+    NOT_SERVING = 2;
+  }
+
+  Status status = 1;
+}
+
+message Request {
+  bytes  Key   = 1;
+  uint64 Count = 2;
+}
+
+message Response {
+  uint64 Count = 1;
+}
+
+// endregion
+
+// region Service
+service Spam {
+  rpc SetGet(Request) returns (Response);
+
+  //  rpc Check(google.protobuf.Empty) returns (HealthResponse);
+  //  rpc Watch(google.protobuf.Empty) returns (stream HealthResponse);
+}
+// endregion

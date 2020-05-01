@@ -1,0 +1,7 @@
+ColumnLimit: 0
+UseTab: ForIndentation
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
