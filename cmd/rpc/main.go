@@ -19,13 +19,6 @@ var connpool *grpcpool.Pool
 func init() {
 	var err error
 	conn := func() (*grpc.ClientConn, error) {
-		// https://github.com/bradleyjkemp/grpc-tools/issues/29
-		// https://weblogs.asp.net/owscott/introducing-testing-domain-localtest-me
-		// return grpc.Dial("localtest.me:7700",
-		// 	grpc.WithInsecure(),
-		// 	grpc.WithDefaultCallOptions(
-		// 		grpc.ForceCodec(&codec.Msgpack{})))
-
 		return grpc.Dial("localhost:3333",
 			grpc.WithInsecure(),
 			grpc.WithDefaultCallOptions())
