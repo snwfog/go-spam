@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
@@ -51,7 +50,7 @@ type bucket struct {
 
 	w [w_size]unsafe.Pointer
 
-	mu sync.RWMutex
+	// mu sync.RWMutex
 }
 
 func (b *bucket) run() {
