@@ -1,15 +1,24 @@
 package log
 
 import (
-	"os"
-
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
+var Logger *zap.Logger
+
 func init() {
-	logrus.SetFormatter(&logrus.TextFormatter{})
+	cfg := zap.NewDevelopmentConfig()
+	cfg.DisableCaller = true
+	cfg.DisableStacktrace = true
+	cfg.Encoding = "console"
+	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	cfg.EncoderConfig.TimeKey = "ts"
+	cfg.EncoderConfig.LevelKey = "level"
 
-	logrus.SetOutput(os.Stdout)
-
-	logrus.SetLevel(logrus.DebugLevel)
+	var err error
+	Logger, err = cfg.Build()
+	if err != nil {
+		panic("logger error")
+	}
 }

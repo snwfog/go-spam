@@ -1,20 +1,45 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"net"
+	"net/http"
 
-	"github.com/sirupsen/logrus"
+	"github.com/mediocregopher/radix/v3"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
 	spam_svc "github.com/StackAdapt/go-spam/external/services/grpc/definition"
+	. "github.com/StackAdapt/go-spam/log"
 )
 
+var pool *radix.Pool
+var ip_spam_script = radix.NewEvalScript(1,
+	`local count = redis.call("INCR", KEYS[1])
+redis.call("EXPIRE", KEYS[1], ARGV[1])
+return count
+`)
+
+func init() {
+	var err error
+	pool, err = radix.NewPool("tcp", "localhost:6384", 200)
+	if err != nil {
+		Logger.Fatal("redis error", zap.Error(err))
+	}
+
+	Logger.Info("redis up", zap.String("port", ":6384"))
+}
+
 func main() {
-	logrus.Infof("spam up: %+v", build)
-	if err:= run(); err != nil {
-		logrus.Errorf("server error: %+v", err)
+	go func() {
+		Logger.Info("prometheus", zap.String("port", ":9273"))
+		http.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":9273", nil)
+	}()
+
+	Logger.Info("spam up", zap.Any("build", build))
+	if err := run(); err != nil {
+		Logger.Error("server error", zap.Error(err))
 	}
 }
 
@@ -24,20 +49,9 @@ func run() error {
 
 	lis, err := net.Listen("tcp", ":3333")
 	if err != nil {
-		logrus.Error("listening error", err)
+		Logger.Error("listening error", zap.Error(err))
 	}
 
-	logrus.WithFields(logrus.Fields{"port": ":3333"}).Info("listening")
+	Logger.Info("listening", zap.String("port", ":3333"))
 	return s.Serve(lis)
-}
-
-type svc struct{}
-
-func (svc) SetGet(ctx context.Context, req *spam_svc.Request) (*spam_svc.Response, error) {
-	estimate, err := Estimate(req.Key, req.Count)
-	if err != nil {
-		return nil, fmt.Errorf("error: %+v", err)
-	}
-
-	return &spam_svc.Response{Count: estimate}, nil
 }
