@@ -49,6 +49,19 @@ func Test_tsk(t *testing.T) {
 	expect.Equal(uint64(2), est)
 }
 
+// go test -run=sketch -v
+// === RUN   Test_sketch
+//    Test_sketch: hist.go:41: k:                    0, v:      69005
+//    Test_sketch: hist.go:41: k:                    1, v:     263185
+//    Test_sketch: hist.go:41: k:                    2, v:     369928
+//    Test_sketch: hist.go:41: k:                    3, v:     216508
+//    Test_sketch: hist.go:41: k:                    4, v:      53570
+//    Test_sketch: hist.go:41: k:                    5, v:       5742
+//    Test_sketch: hist.go:41: k:                    6, v:        353
+//    Test_sketch: hist.go:41: k:                    7, v:         12
+// --- PASS: Test_sketch (6.17s)
+// PASS
+// ok  	github.com/StackAdapt/go-spam	6.258s
 func Test_sketch(t *testing.T) {
 	expect := assert.New(t)
 	sk, _ := countminsketch.NewWithEstimates(0.00001, 0.999)

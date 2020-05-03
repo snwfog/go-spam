@@ -16,7 +16,7 @@ import (
 )
 
 const epsilon = 0.00001
-const delta = 0.999
+const delta = 0.9999
 
 const w_size = 7      // maximum window size
 const b_size = 1 << 9 // bucket size
